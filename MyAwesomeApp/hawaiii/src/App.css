@@ -1,0 +1,24 @@
+@font-face { 
+    font-family: Philosopher;
+    src: url("./Philosopher-Regular.ttf");
+} 
+
+.styles_modal__gNwvD {
+    background: #202020 !important;
+}
+
+.styles_closeButton__20ID4 {
+    background: #e5e4e2 !important;
+}
+
+.MuiTypography-body1-72 {
+    font-family: Philosopher !important;
+}
+
+.datetime-container {
+    font-family: Philosopher !important;
+}
+
+.MuiInput-underline-19:after {
+	border-bottom: 2px solid #00D5D4 !important;
+}
