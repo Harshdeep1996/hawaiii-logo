@@ -14,6 +14,7 @@ function returnEmailTemplate(req) {
     Total Number of passengers:  ${req.body.numberPassengers}\n
     Type of medical emergency:  ${req.body.medicalEmergencyType}\n
     Date and time of the booking:  ${req.body.dateTimeBooking}\n
+    Customer's contact number is:  ${req.body.phone}\n
     \n\nPlease handle this query at the earliest. Good luck.\n\nHawaiii Website.`
   );
 }

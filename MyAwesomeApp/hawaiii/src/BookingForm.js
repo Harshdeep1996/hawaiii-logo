@@ -9,13 +9,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import DatePickerDialog from 'material-ui/DatePicker/DatePickerDialog'
 import TimePickerDialog from 'material-ui/TimePicker/TimePickerDialog';
 
-import ReactGoogleMapLoader from "react-google-maps-loader";
-import ReactGooglePlacesSuggest from "react-google-places-suggest";
-
 import Modal from 'react-responsive-modal';
 
-
-const API_KEY = "AIzaSyAGHQUFdUuZDgZ5pdszYqzFa3SWu4rA9v4";
 
 export default class BookingForm extends Component {
 
@@ -27,10 +22,9 @@ export default class BookingForm extends Component {
       medicalEmergencyType: '',
       numberPassengers: '',
       dateTimeBooking: null,
-      search: '',
       value: '',
-      search2: '',
-      value2: ''
+      value2: '',
+      phone: ''
     };
 
     this.upvote = this.upvote.bind(this);
@@ -65,34 +59,17 @@ export default class BookingForm extends Component {
     this.setState({ dateTimeBooking: dateTimeBooking });
   }
 
-  handleInputChangeFrom(e) {
-    this.setState({search: e.target.value, value: e.target.value});
-  }
-
-  handleSelectSuggestFrom(suggest) {
-    console.log(suggest);
-    this.setState({search: "", value: suggest.formatted_address});
-  }
-
-  handleInputChangeTo(e) {
-    this.setState({search2: e.target.value, value2: e.target.value});
-  }
-
-  handleSelectSuggestTo(suggest) {
-    console.log(suggest);
-    this.setState({search2: "", value2: suggest.formatted_address});
-  }
-
-  upvote(e, from, to, airAmbChecked, medicalEmergencyType, dateTimeBooking, numberPassengers) {
+  upvote(e, from, to, airAmbChecked, medicalEmergencyType, dateTimeBooking, numberPassengers, phone) {
     e.preventDefault();
 
     var body = {
         from:from,
         to:to,
-        airAmbChecked: airAmbChecked ? 'Not an air emergency case' : airAmbChecked,
+        airAmbChecked: airAmbChecked ? 'Yes it is' : 'No it is not',
         medicalEmergencyType: airAmbChecked ? medicalEmergencyType : 'Not a medical emergency case',
         dateTimeBooking: dateTimeBooking,
-        numberPassengers: numberPassengers
+        numberPassengers: numberPassengers,
+        phone:phone
     };
 
     // Call email function
@@ -110,7 +87,7 @@ export default class BookingForm extends Component {
         console.log(res.json());
     });
 
-    // Set Modal
+    // // Set Modal
     this.setState({ open: true });
 
     // Clearing the form
@@ -119,10 +96,9 @@ export default class BookingForm extends Component {
       medicalEmergencyType: '',
       numberPassengers: '',
       dateTimeBooking: null,
-      search: '',
       value: '',
-      search2: '',
-      value2: ''
+      value2: '',
+      phone:''
    });
     return false;
   }
@@ -134,10 +110,11 @@ export default class BookingForm extends Component {
   render() {
 
     // Need to add date logic
-    const { value, value2, numberPassengers } = this.state;
+    const { value, value2, numberPassengers, phone } = this.state;
     const isEnabled =
           value.length > 0 &&
           value2.length > 0 &&
+          phone.length >= 10 && phone.length <= 13 && 
           numberPassengers.length > 0 && !isNaN(numberPassengers);
 
     return (
@@ -147,81 +124,40 @@ export default class BookingForm extends Component {
 
           <form ref="form" onSubmit={this.handleSubmit}>
             <div>
+                <TextField
+                    id="from"
+                    label="From (Departure)"
+                    required={ true }
+                    InputLabelProps={{
+                    style: {
+                        color: '#202020',
+                        fontFamily: 'Philosopher'
+                      }
+                    }}
+                    value={this.state.value}
+                    onChange={this.handleChangeString('value')}
+                    margin="normal"
+                    style={{ width: '80%' }}
+                />
+            </div>
 
-              <ReactGoogleMapLoader
-                params={{
-                  key: API_KEY,
-                  libraries: "places",
-                }}
-                render={googleMaps =>
-                  googleMaps && (
-                    <div>
-                      <ReactGooglePlacesSuggest
-                        autocompletionRequest={{input: this.state.search}}
-                        googleMaps={googleMaps}
-                        onSelectSuggest={this.handleSelectSuggestFrom.bind(this)}
-                      >
-
-                        <TextField
-                          id="from"
-                          value={this.state.value}
-                          required={ true }
-                          label="From (Departure)"
-                          InputLabelProps={{
-                            style: {
-                              color: '#202020',
-                              fontFamily: 'Philosopher'
-                            }
-                          }}
-                          onChange={this.handleInputChangeFrom.bind(this)}
-                          margin="normal"
-                          style={{ width: '80%' }}
-                        />
-
-                      </ReactGooglePlacesSuggest>
-                    </div>
-                  )
-                }
-              />
-              </div>
 
               <div>
-
-              <ReactGoogleMapLoader
-                params={{
-                  key: API_KEY,
-                  libraries: "places",
-                }}
-                render={googleMaps =>
-                  googleMaps && (
-                    <div>
-                      <ReactGooglePlacesSuggest
-                        autocompletionRequest={{input: this.state.search2}}
-                        googleMaps={googleMaps}
-                        onSelectSuggest={this.handleSelectSuggestTo.bind(this)}
-                      >
-
-                        <TextField
-                          id="from"
-                          value={this.state.value2}
-                          required={ true }
-                          label="To (Arrival)"
-                          InputLabelProps={{
-                            style: {
-                              color: '#202020',
-                              fontFamily: 'Philosopher'
-                            }
-                          }}
-                          onChange={this.handleInputChangeTo.bind(this)}
-                          margin="normal"
-                          style={{ width: '80%' }}
-                        />
-
-                      </ReactGooglePlacesSuggest>
-                    </div>
-                  )
-                }
-              />
+                <TextField
+                  id="from"
+                  value={this.state.value2}
+                  required={ true }
+                  label="To (Arrival)"
+                  InputLabelProps={{
+                    style: {
+                      color: '#202020',
+                      fontFamily: 'Philosopher'
+                    }
+                  }}
+                  onChange={this.handleChangeString('value2')}
+                  margin="normal"
+                  style={{ width: '80%' }}
+                />
               </div>
 
               <div>
@@ -232,16 +168,30 @@ export default class BookingForm extends Component {
                     style: {
                       color: '#202020',
                       fontFamily: 'Philosopher',
-                      cssUnderline: {
-    					'&:after': {
-      						borderBottomColor: '#00d4d5',
-    					},
-  						},
                     }
                   }}
                   value={this.state.numberPassengers}
                   required={ true }
                   onChange={this.handleChangeString('numberPassengers')}
+                  margin="normal"
+                  style={{ width: '80%' }}
+                />
+              </div>
+
+
+              <div>
+                <TextField
+                  id="phone"
+                  value={this.state.phone}
+                  required={ true }
+                  label="10 digit Mobile Number"
+                  InputLabelProps={{
+                    style: {
+                      color: '#202020',
+                      fontFamily: 'Philosopher'
+                    }
+                  }}
+                  onChange={this.handleChangeString('phone')}
                   margin="normal"
                   style={{ width: '80%' }}
                 />
@@ -301,7 +251,7 @@ export default class BookingForm extends Component {
               />
             </div>
 
-            <Button style={{ fontFamily: 'Philosopher', backgroundColor:'#00D5D5', color:'#202020' }}variant="contained" color="primary" type="submit" onClick={(e) => this.upvote(e, this.state.value, this.state.value2, this.state.airAmbChecked, this.state.medicalEmergencyType, this.state.dateTimeBooking, this.state.numberPassengers)} disabled={!isEnabled}>
+            <Button style={{ fontFamily: 'Philosopher', backgroundColor:!isEnabled ? '#202020' : '#00d4d5', color:!isEnabled ? '#e5e4e2': '#202020', opacity: !isEnabled ? 0.4 : 0.9}} variant="contained" type="submit" onClick={(e) => this.upvote(e, this.state.value, this.state.value2, this.state.airAmbChecked, this.state.medicalEmergencyType, this.state.dateTimeBooking, this.state.numberPassengers, this.state.phone)} disabled={!isEnabled}>
               Book Now
             </Button>
 

@@ -8,7 +8,7 @@ import BookingForm from './BookingForm';
 import HomeLeft from './HomeLeft';
 
 
-class App extends Component {
+export default class App extends Component {
 
   constructor(props) {
     super(props);
@@ -118,6 +118,3 @@ class App extends Component {
 
   }
 }
-
-
-export default App;
