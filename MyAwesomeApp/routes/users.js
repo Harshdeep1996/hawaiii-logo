@@ -1,6 +1,21 @@
 var express = require('express');
 var nodemailer = require('nodemailer');
-var transporter = require('nodemailer-smtp-transport'); 
+var transporter = require('nodemailer-smtp-transport');
+
+var Datastore = require('@google-cloud/datastore');
+
+ // Creates a client
+const datastore = new Datastore({
+  projectId: 'hawaiii-av',
+  keyFilename: './.hawaiii-11b6e8b5cd9c.json'
+});
+
+// The kind for the new entity
+const kind = 'hawaiiisens';
+// The name/ID for the new entity
+const name = 5639445604728832;
+// The Cloud Datastore key for the new entity
+const taskKey = datastore.key([kind, name]);
 
 var router = express.Router();
 
@@ -19,27 +34,37 @@ function returnEmailTemplate(req) {
   );
 }
 
+
 router.post('/', function(req, res, next) {
-    var smtpTransport2 = nodemailer.createTransport(
+    let hostname, receiver, pass;
+
+    datastore.get(taskKey
+    , Promise.resolve()).then(results => {
+        const entity = results[0];
+        hostname = entity.HOSTNAME;
+        receiver = entity.RECEIVER;
+        pass = entity.PASSWORD;
+
+        var smtpTransport2 = nodemailer.createTransport(
         transporter({
             service: 'gmail',
             host: 'smtp.gmail.com', 
             auth: {
-                user: process.env.HOSTNAME,
-                pass: process.env.PASSWORD
-        }
-    }));
+                user: hostname,
+                pass: pass
+            }
+        }));
 
-    // Setup mail configuration
-    var mailOptions = {
-        from: process.env.HOSTNAME,
-        to: process.env.RECEIVER,
-        subject: 'Charter Query',
-        text: returnEmailTemplate(req)
-    };
+        // Setup mail configuration
+        var mailOptions = {
+            from: hostname,
+            to: receiver,
+            subject: 'Charter Query',
+            text: returnEmailTemplate(req)
+        };
 
-    // send mail
-    smtpTransport2.sendMail(mailOptions, function(error, info) {
+        // send mail
+        smtpTransport2.sendMail(mailOptions, function(error, info) {
         if (error) {
             return res.send(error);
         } else {
@@ -50,6 +75,10 @@ router.post('/', function(req, res, next) {
             })
         }
         smtpTransport.close();
+        });
+
+    }, err => {
+        console.log(err);
     });
 });
 

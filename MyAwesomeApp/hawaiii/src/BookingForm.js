@@ -88,18 +88,18 @@ export default class BookingForm extends Component {
     });
 
     // // Set Modal
-    this.setState({ open: true });
+    // this.setState({ open: true });
 
     // Clearing the form
-    this.setState({
-      airAmbChecked: false,
-      medicalEmergencyType: '',
-      numberPassengers: '',
-      dateTimeBooking: null,
-      value: '',
-      value2: '',
-      phone:''
-   });
+   //  this.setState({
+   //    airAmbChecked: false,
+   //    medicalEmergencyType: '',
+   //    numberPassengers: '',
+   //    dateTimeBooking: null,
+   //    value: '',
+   //    value2: '',
+   //    phone:''
+   // });
     return false;
   }
 
